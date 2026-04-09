@@ -1,0 +1,10 @@
+pandas
+scikit-learn
+dagster
+dagit
+streamlit
+requests
+rpy2
+matplotlib
+seaborn
+openpyxl
