@@ -8,3 +8,5 @@ rpy2
 matplotlib
 seaborn
 openpyxl
+dask[dataframe]
+torch

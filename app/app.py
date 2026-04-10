@@ -2,71 +2,103 @@ import streamlit as st
 import pandas as pd
 import joblib
 import datetime
-import os
 
-# Configuración de la página
-st.set_page_config(page_title="Predicador de Ventas Rossmann", page_icon="📈")
+# Configuración de la página (layout="wide" para que el simulador respire)
+st.set_page_config(page_title="Predictor de Ventas Rossmann", page_icon="📈", layout="wide")
 
-st.title("📈 Predicción de Ventas Rossmann")
-st.markdown("Introduce los datos de la tienda para obtener una predicción inteligente.")
+st.title("📈 Predictor de Ventas Rossmann")
 
 # 1. Cargamos el modelo y los datos de las tiendas
 @st.cache_resource
 def load_model():
-    # Nota: Asegúrate de que la ruta coincide con tu carpeta
     return joblib.load('notebooks/model_rossmann.joblib')
 
 @st.cache_data
 def load_store_info():
-    # Cargamos el CSV de tiendas para tener los datos de competencia y tipos
     return pd.read_csv('data/store.csv')
 
 # Inicializamos datos
 data_model = load_model()
 model = data_model['model']
-features_entrenamiento = data_model['features']
 df_stores = load_store_info()
 
 # 2. Interfaz de usuario (Sidebar)
-st.sidebar.header("Configuración de la Tienda")
+st.sidebar.header("⚙️ Configuración")
 
-tienda_id = st.sidebar.number_input("Número de Tienda", min_value=1, max_value=1115, value=1)
-fecha = st.sidebar.date_input("Fecha de predicción", datetime.date(2026, 4, 10))
-promo = st.sidebar.checkbox("¿Tiene promoción hoy?", value=True)
+# EL INTERRUPTOR MÁGICO
+modo_simulador = st.sidebar.toggle("🧪 Activar Modo Simulador Avanzado")
+st.sidebar.markdown("---")
 
-# Extraemos datos de la fecha
-dia_semana = fecha.weekday() + 1  # Lunes=1, Domingo=7
+# 3. Lógica de Interfaz según el Modo
+if not modo_simulador:
+    # --- MODO NORMAL (Básico) ---
+    st.markdown("Selecciona una tienda existente para obtener una predicción basada en sus datos reales.")
+    
+    tienda_id = st.sidebar.number_input("Número de Tienda", min_value=1, max_value=1115, value=1)
+    fecha = st.sidebar.date_input("Fecha de predicción", datetime.date(2026, 4, 10))
+    promo = st.sidebar.checkbox("¿Tiene promoción hoy?", value=True)
+    
+    # Extraemos info real del CSV
+    store_row = df_stores[df_stores['Store'] == tienda_id].iloc[0]
+    distancia = store_row['CompetitionDistance'] if pd.notnull(store_row['CompetitionDistance']) else df_stores['CompetitionDistance'].median()
+    tipo_tienda = store_row['StoreType']
+    surtido = store_row['Assortment']
+
+else:
+    # --- MODO SIMULADOR (Dios) ---
+    st.markdown("### 🧪 Laboratorio de Simulación")
+    st.info("Inventa tu propio escenario. ¿Qué pasaría si montas una tienda gigante con la competencia pegada a la puerta?")
+    
+    # Usamos columnas para que no quede una lista kilométrica
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        tienda_id = st.number_input("ID Tienda (Ficticio)", value=9999)
+        fecha = st.date_input("Fecha Simulada", datetime.date(2026, 4, 10))
+        promo = st.checkbox("Activar Promoción Extraordinaria", value=True)
+        
+    with col2:
+        distancia = st.number_input("Distancia a la Competencia (metros)", min_value=0, value=150, step=50)
+        
+        # Nombres basados en el análisis real de datos de Rossmann
+        tipo_sel = st.selectbox(
+            "Tipo de Tienda (Modelo)", 
+            [
+                "a (Estándar - Mayoría de tiendas)", 
+                "b (Alto tráfico - Ej. Estación/Aeropuerto)", 
+                "c (Barrio/Pequeña)", 
+                "d (Hipermercado/Afueras)"
+            ]
+        )
+        tipo_tienda = tipo_sel[0] # Se queda con la letra 'a', 'b', 'c' o 'd'
+        
+    with col3:
+        # Definición oficial de Kaggle
+        surtido_sel = st.selectbox(
+            "Nivel de Surtido", 
+            [
+                "a (Básico)", 
+                "b (Extra)", 
+                "c (Extendido)"
+            ]
+        )
+        surtido = surtido_sel[0] # Se queda con la 'a', 'b' o 'c'
+        
+        # Corregimos el nombre del checkbox de Promo (puedes poner esto encima del with col1)
+        # promo = st.checkbox("Promoción Activa en Tienda", value=True)
+
+# 4. Extracción de Fecha (Común a ambos modos)
+dia_semana = fecha.weekday() + 1
 mes = fecha.month
 dia = fecha.day
 año = fecha.year
 
-# 3. Lógica para obtener datos reales de la tienda seleccionada
-def get_inputs_tienda(id_tienda):
-    # Buscamos la fila de la tienda
-    store_row = df_stores[df_stores['Store'] == id_tienda].iloc[0]
-    
-    # Manejo de nulos en CompetitionDistance (usamos la mediana como en tu notebook)
-    distancia = store_row['CompetitionDistance']
-    if pd.isna(distancia):
-        distancia = df_stores['CompetitionDistance'].median()
-        
-    # Mapeo de One-Hot Encoding (StoreType y Assortment)
-    # Según tu entrenamiento: StoreType_b, StoreType_c, StoreType_d, Assortment_b, Assortment_c
-    return {
-        'CompetitionDistance': distancia,
-        'StoreType_b': 1 if store_row['StoreType'] == 'b' else 0,
-        'StoreType_c': 1 if store_row['StoreType'] == 'c' else 0,
-        'StoreType_d': 1 if store_row['StoreType'] == 'd' else 0,
-        'Assortment_b': 1 if store_row['Assortment'] == 'b' else 0,
-        'Assortment_c': 1 if store_row['Assortment'] == 'c' else 0,
-    }
+st.markdown("---")
 
-# 4. Botón de Predicción
-if st.button("Calcular Ventas Estimadas"):
-    # Obtenemos los datos técnicos de la tienda
-    info_tecnica = get_inputs_tienda(tienda_id)
+# 5. Botón y Predicción
+if st.button("🚀 Calcular Ventas Estimadas", type="primary", use_container_width=True):
     
-    # Construimos el diccionario con el ORDEN EXACTO de tus features
+    # Construimos el diccionario con el ORDEN EXACTO de tus 12 features
     datos_finales = {
         'Store': tienda_id,
         'DayOfWeek': dia_semana,
@@ -74,29 +106,27 @@ if st.button("Calcular Ventas Estimadas"):
         'Month': mes,
         'Day': dia,
         'Year': año,
-        'CompetitionDistance': info_tecnica['CompetitionDistance'],
-        'StoreType_b': info_tecnica['StoreType_b'],
-        'StoreType_c': info_tecnica['StoreType_c'],
-        'StoreType_d': info_tecnica['StoreType_d'],
-        'Assortment_b': info_tecnica['Assortment_b'],
-        'Assortment_c': info_tecnica['Assortment_c']
+        'CompetitionDistance': distancia,
+        'StoreType_b': 1 if tipo_tienda == 'b' else 0,
+        'StoreType_c': 1 if tipo_tienda == 'c' else 0,
+        'StoreType_d': 1 if tipo_tienda == 'd' else 0,
+        'Assortment_b': 1 if surtido == 'b' else 0,
+        'Assortment_c': 1 if surtido == 'c' else 0
     }
     
     # Convertimos a DataFrame
     input_df = pd.DataFrame([datos_finales])
     
-    # Realizamos la predicción
+    # Predicción
     prediccion = model.predict(input_df)[0]
     
-    # Mostramos resultados
+    # Resultados visuales
     st.balloons()
-    st.success(f"### 💰 Predicción: {prediccion:.2f} €")
+    st.success(f"## 💰 Ventas Estimadas: {prediccion:.2f} €")
     
-    # Feedback visual de los datos usados
-    with st.expander("Ver detalles del cálculo"):
-        st.write(f"Tienda tipo: **{df_stores[df_stores['Store']==tienda_id]['StoreType'].values[0]}**")
-        st.write(f"Distancia competencia: **{info_tecnica['CompetitionDistance']}m**")
+    # Demostración del "Iceberg" para el profesor
+    with st.expander("🔍 Ver la radiografía de datos (Las 12 variables reales que lee la IA)"):
+        st.write("Aunque en la interfaz solo ves unos pocos controles, la IA procesa esta matriz exacta:")
         st.dataframe(input_df)
 
-# Contexto estadístico fijo
-st.info(f"Nota: El modelo tiene una precisión del 89.19% con un error medio de 634€.")
+st.info("Nota: El modelo tiene una precisión del 89.19% con un error medio de 634€.")
