@@ -48,6 +48,7 @@ Para este proyecto se han implementado técnicas avanzadas que van más allá de
 ├── model_rossmann.joblib   # Modelo final entrenado
 ├── requirements.txt        # Dependencias del proyecto
 └── README.md               # Documentación
+```
 
 ## 📈 Resultados del Modelo
 
@@ -66,11 +67,14 @@ Sigue estos pasos para replicar el entorno y ejecutar el proyecto:
    ```bash
    git clone https://github.com/tu-usuario/nombre-del-repo.git
    cd nombre-del-repo
+   ```
 
 2. **Instalar dependencias:**
    ```bash
    pip install -r requirements.txt
+   ```
 
 3. **Ejecutar la App de Streamlit:**
    ```bash
    streamlit run app/app.py
+   ```
