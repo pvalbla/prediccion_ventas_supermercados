@@ -7,6 +7,8 @@
 
 Este proyecto implementa una solución integral de **Ciencia de Datos y Machine Learning** para la predicción de ventas en una cadena de supermercados (Rossmann). Cubre desde la orquestación de datos masivos hasta el despliegue de una aplicación web interactiva.
 
+👉 **[Accede a la Demo en Vivo aquí](https://prediccion-ventas-supermercados.streamlit.app/)**
+
 ---
 
 ## 🚀 Características Principales (Requisitos Avanzados)
