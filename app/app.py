@@ -161,7 +161,7 @@ if st.button("🚀 Calcular Ventas Estimadas", type="primary", use_container_wid
     
     # 2. Visualización: Gráfico de importancia de variables
     st.subheader("📊 Radiografía de la Decisión")
-    st.write("¿Qué factores ha considerado más importantes el modelo para darte esta predicción?")
+    st.write("¿Qué factores considera el modelo más importantes a nivel global para calcular las ventas?")
     
     # Extraemos las importancias directamente de tu Random Forest
     importancias = model.feature_importances_
