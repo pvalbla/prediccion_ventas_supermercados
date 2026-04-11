@@ -70,7 +70,7 @@ else:
             min_value=datetime.date(2013, 1, 1),
             max_value=datetime.date(2036, 12, 31)
         )
-        promo = st.checkbox("Activar Promoción Extraordinaria", value=True)
+        promo = st.checkbox("Día de Promoción Activa", value=True)
         
     with col2:
         distancia = st.number_input("Distancia a la Competencia (metros)", min_value=0, value=150, step=50)
@@ -151,4 +151,4 @@ if st.button("🚀 Calcular Ventas Estimadas", type="primary", use_container_wid
         st.write("Aunque en la interfaz solo ves unos pocos controles, la IA procesa esta matriz exacta:")
         st.dataframe(input_df)
 
-st.info("Nota: El modelo base (2015) tiene una precisión del 89.19% con un error medio de 634€.")
+st.info("Nota: El modelo base (2015) tiene una precisión del 81.14% con un error medio de 848.34 €.")
