@@ -48,8 +48,14 @@ if not modo_simulador:
     )
     promo = st.sidebar.checkbox("¿Tiene promoción hoy?", value=True)
     
-    # Extraemos info real del CSV
-    store_row = df_stores[df_stores['Store'] == tienda_id].iloc[0]
+    # Extraemos info real del CSV con protección anti-crasheos
+    tienda_filtrada = df_stores[df_stores['Store'] == tienda_id]
+    
+    if tienda_filtrada.empty:
+        st.warning(f"⚠️ La tienda número {tienda_id} no existe en la base de datos. Por favor, prueba con otro número o activa el 'Modo Simulador'.")
+        st.stop() # Esto congela la app aquí para que no lance el error rojo de Pandas
+        
+    store_row = tienda_filtrada.iloc[0]
     distancia = store_row['CompetitionDistance'] if pd.notnull(store_row['CompetitionDistance']) else df_stores['CompetitionDistance'].median()
     tipo_tienda = store_row['StoreType']
     surtido = store_row['Assortment']
@@ -140,15 +146,40 @@ if st.button("🚀 Calcular Ventas Estimadas", type="primary", use_container_wid
     
     # Resultados visuales
     st.balloons()
-    st.success(f"## 💰 Ventas Estimadas: {prediccion_ajustada:.2f} €")
     
-    # Mensaje aclaratorio si se aplica inflación
-    if años_diferencia > 0 and tasa_inflacion > 0:
-        st.caption(f"📈 *Nota: Se ha aplicado un ajuste acumulado del {((multiplicador_inflacion-1)*100):.1f}% por inflación ({tasa_inflacion*100:.0f}% anual) desde 2015.*")
+    # 1. Panel de métricas destacadas
+    res_col1, res_col2, res_col3 = st.columns(3)
     
-    # Demostración del "Iceberg" para el profesor
-    with st.expander("🔍 Ver la radiografía de datos (Las 12 variables reales que lee la IA)"):
-        st.write("Aunque en la interfaz solo ves unos pocos controles, la IA procesa esta matriz exacta:")
+    with res_col1:
+        st.metric(label="💰 Ventas Base (2015)", value=f"{prediccion_base:,.2f} €")
+    with res_col2:
+        st.metric(label="📈 Ajuste por Inflación", value=f"+ {((multiplicador_inflacion-1)*100):.1f} %")
+    with res_col3:
+        st.metric(label="🚀 PROYECCIÓN FINAL", value=f"{prediccion_ajustada:,.2f} €", delta="Estimación")
+
+    st.markdown("---")
+    
+    # 2. Visualización: Gráfico de importancia de variables
+    st.subheader("📊 Radiografía de la Decisión")
+    st.write("¿Qué factores ha considerado más importantes el modelo para darte esta predicción?")
+    
+    # Extraemos las importancias directamente de tu Random Forest
+    importancias = model.feature_importances_
+    df_grafico = pd.DataFrame({
+        'Variable': [
+            'ID Tienda', 'Día Semana', 'Promoción', 'Mes', 'Día', 'Año', 
+            'Distancia Competencia', 'Tienda Tipo B', 'Tienda Tipo C', 'Tienda Tipo D',
+            'Surtido B', 'Surtido C'
+        ],
+        'Importancia (%)': importancias * 100
+    }).sort_values(by='Importancia (%)', ascending=True)
+    
+    # Gráfico nativo y limpio
+    st.bar_chart(df_grafico, x='Variable', y='Importancia (%)', color="#1f77b4", height=350)
+
+    # 3. Demostración de los datos en bruto
+    with st.expander("🔍 Ver matriz de datos (Input matemático de la IA)"):
+        st.write("Para conseguir esta predicción, el modelo ha procesado esta fila de 12 variables exactas:")
         st.dataframe(input_df)
 
-st.info("Nota: El modelo base (2015) tiene una precisión del 81.14% con un error medio de 848.34 €.")
+st.info("Nota metodológica: El modelo base Random Forest tiene una precisión del 81.14% (R²) con un error medio de 848.34 € en el set de validación.")
