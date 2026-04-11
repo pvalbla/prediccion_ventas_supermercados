@@ -1,5 +1,4 @@
 .venv/
 .tmp_dagster_home_l9ctdm7i/
 src/__pycache__/
-notebooks/model_rossmann.joblib
 data/df_master_limpio.parquet
