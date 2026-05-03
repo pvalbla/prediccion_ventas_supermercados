@@ -5,7 +5,7 @@
 [![Orchestrator](https://img.shields.io/badge/Orchestrator-Dagster-252031.svg)](https://dagster.io/)
 [![Deep Learning](https://img.shields.io/badge/Deep%20Learning-PyTorch-EE4C2C.svg)](https://pytorch.org/)
 
-👉 **[Accede a la Demo en Vivo aquí](https://prediccion-ventas-supermercados.streamlit.app/)**
+👉 **[Accede a la Demo en Vivo aquí](https://c2qhmuvymsjzvx6fnbb4fu.streamlit.app/)**
 
 ---
 
@@ -14,7 +14,7 @@
 El **objetivo** de este proyecto es construir una solución integral de Ciencia de Datos y MLOps capaz de predecir las ventas diarias de las tiendas Rossmann. 
 
 El **problema que resuelve** es la dificultad de estimar la demanda en el sector retail debido a factores volátiles como promociones, festivos, y la distancia a los competidores. La aplicación interactiva permite a los gerentes de las tiendas simular escenarios (ej. abrir una tienda nueva cerca de la competencia o activar una promoción) para anticipar los ingresos y optimizar el inventario o el personal.
-
+  
 ---
 
 ## 🚀 Características Principales (Requisitos Avanzados)
