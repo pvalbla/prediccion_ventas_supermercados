@@ -5,9 +5,15 @@
 [![Orchestrator](https://img.shields.io/badge/Orchestrator-Dagster-252031.svg)](https://dagster.io/)
 [![Deep Learning](https://img.shields.io/badge/Deep%20Learning-PyTorch-EE4C2C.svg)](https://pytorch.org/)
 
-Este proyecto implementa una solución integral de **Ciencia de Datos y Machine Learning** para la predicción de ventas en una cadena de supermercados (Rossmann). Cubre desde la orquestación de datos masivos hasta el despliegue de una aplicación web interactiva.
-
 👉 **[Accede a la Demo en Vivo aquí](https://prediccion-ventas-supermercados.streamlit.app/)**
+
+---
+
+## 🎯 Objetivo del Proyecto y Problema que Resuelve
+
+El **objetivo** de este proyecto es construir una solución integral de Ciencia de Datos y MLOps capaz de predecir las ventas diarias de las tiendas Rossmann. 
+
+El **problema que resuelve** es la dificultad de estimar la demanda en el sector retail debido a factores volátiles como promociones, festivos, y la distancia a los competidores. La aplicación interactiva permite a los gerentes de las tiendas simular escenarios (ej. abrir una tienda nueva cerca de la competencia o activar una promoción) para anticipar los ingresos y optimizar el inventario o el personal.
 
 ---
 
@@ -36,10 +42,8 @@ Para este proyecto se han implementado técnicas avanzadas que van más allá de
 ---
 
 ## 📂 Estructura del Proyecto
-
 ```bash
-├── app/
-│   └── app.py              # Aplicación web de Streamlit
+├── main.py                 # Aplicación web de Streamlit (Punto de entrada principal)
 ├── data/                   # Datasets (CSV, Parquet, Excel)
 ├── notebooks/
 │   ├── 01_exploracion.ipynb # EDA, Integración con R y Dask
@@ -47,8 +51,9 @@ Para este proyecto se han implementado técnicas avanzadas que van más allá de
 ├── src/
 │   ├── dagster_pipeline.py # Código de orquestación
 │   └── assets.py           # Definición de activos de datos
+├── pyproject.toml          # Configuración de dependencias locales para uv
+├── requirements.txt        # Dependencias ligeras para Streamlit Cloud
 ├── model_rossmann.joblib   # Modelo final entrenado
-├── requirements.txt        # Dependencias del proyecto
 └── README.md               # Documentación
 ```
 
@@ -61,22 +66,31 @@ Se realizó una comparativa técnica exhaustiva para seleccionar el algoritmo co
 
 **Conclusión técnica:** Aunque la red neuronal muestra una curva de aprendizaje positiva, el **Random Forest** demuestra una superioridad clara en la gestión de datos tabulares y variables categóricas (como el tipo de tienda o surtido), justificando su elección para la aplicación en producción.
 
-## 💻 Instalación y Uso
+## 💻 Instalación y Reproducibilidad
+
+El proyecto está configurado para utilizar `uv` como gestor de dependencias ultrarrápido, garantizando un entorno aislado y reproducible tal y como se solicita en los requisitos de entrega.
 
 Sigue estos pasos para replicar el entorno y ejecutar el proyecto:
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/tu-usuario/nombre-del-repo.git
-   cd nombre-del-repo
-   ```
+### 1. Clonar el repositorio
+```bash
+git clone [https://github.com/pvalbla/prediccion_ventas_supermercados.git](https://github.com/pvalbla/prediccion_ventas_supermercados.git)
+cd prediccion_ventas_supermercados
+```
 
-2. **Instalar dependencias:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 2. Crear el entorno e instalar dependencias con `uv`
+```bash
+uv venv --python 3.11
+uv sync
+```
 
-3. **Ejecutar la App de Streamlit:**
-   ```bash
-   streamlit run app/app.py
-   ```
+### 3. Ejecutar la Aplicación Interactiva
+```bash
+streamlit run main.py
+```
+
+### 4. (Opcional) Ejecutar el Orquestador
+Para visualizar la orquestación de datos:
+```bash
+dagster dev
+```

@@ -1,0 +1,23 @@
+[project]
+name = "prediccion-ventas-rossmann"
+version = "0.1.0"
+description = "Predicción de ventas usando Machine Learning y MLOps"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit",
+    "pandas",
+    "scikit-learn",
+    "joblib",
+    "requests",
+    "numpy",
+    "dask[dataframe]",
+    "torch",
+    "dagster",
+    "matplotlib",
+    "seaborn",
+    "fastparquet",
+    "openpyxl"
+]
+
+[tool.dagster]
+module_name = "src.assets"
