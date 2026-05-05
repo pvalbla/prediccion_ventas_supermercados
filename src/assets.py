@@ -5,9 +5,7 @@ import os
 import joblib
 from sklearn.ensemble import RandomForestRegressor
 
-# ==========================================
-# 1. EXTRACCIÓN DE DATOS
-# ==========================================
+# EXTRACCIÓN DE DATOS
 
 @asset
 def raw_sales_data():
@@ -27,9 +25,9 @@ def raw_store_data():
     return pd.read_csv(os.path.join('data', 'store.csv'))
 
 
-# ==========================================
-# 2. TRANSFORMACIÓN Y LIMPIEZA
-# ==========================================
+
+# TRANSFORMACIÓN Y LIMPIEZA
+
 
 @asset
 def integrated_data(raw_sales_data, raw_store_data):
@@ -67,16 +65,16 @@ def ml_ready_data(integrated_data):
     return df
 
 
-# ==========================================
-# 3. ENTRENAMIENTO Y EXPORTACIÓN
-# ==========================================
+
+# ENTRENAMIENTO Y EXPORTACIÓN
+
 
 @asset
 def train_and_export_model(ml_ready_data):
     """Entrena el Random Forest y guarda el archivo .joblib"""
     df = ml_ready_data
     
-    # Variables que sabemos que son importantes
+    # Variables
     features = [
         'Store', 'DayOfWeek', 'Promo', 'Month', 'Day', 'Year', 
         'CompetitionDistance', 'StoreType_b', 'StoreType_c', 'StoreType_d',
@@ -84,13 +82,12 @@ def train_and_export_model(ml_ready_data):
     ]
     
     # Nos aseguramos de coger solo las columnas que existen en el dataframe
-    # (Por si alguna tienda tipo 'd' no está en un sample pequeño)
     actual_features = [f for f in features if f in df.columns]
     
     X = df[actual_features]
     y = df['Sales']
     
-    # Entrenamos el modelo con los parámetros óptimos que encontraste
+    # Entrenamos el modelo con los parámetros óptimos
     model = RandomForestRegressor(
         n_estimators=40, 
         max_depth=35, 
@@ -100,20 +97,20 @@ def train_and_export_model(ml_ready_data):
     )
     model.fit(X, y)
     
-    # Guardamos el modelo en formato diccionario como hicimos en el notebook
+    # Guardamos el modelo
     model_data = {
         'model': model,
         'features': actual_features
     }
     
-    # Guardamos en la raíz del proyecto o en una carpeta models/
+    # Guardamos el modelo
     joblib.dump(model_data, 'model_rossmann.joblib')
     
-    return True # Dagster solo necesita saber que la tarea terminó con éxito
+    return True
 
-# ==========================================
+
 # DEFINICIONES PARA DAGSTER
-# ==========================================
+
 defs = Definitions(
     assets=[
         raw_sales_data, 
