@@ -61,8 +61,8 @@ Para este proyecto se han implementado técnicas avanzadas que van más allá de
 
 Se realizó una comparativa técnica exhaustiva para seleccionar el algoritmo con mejor desempeño para el negocio:
 
-* **🤖 Random Forest (Modelo Final):** Logró un Error Medio Absoluto (MAE) de **~634.65 €**. Es el modelo más robusto, capturando eficazmente la estacionalidad y el efecto de las promociones.
-* **🧠 Deep Learning (PyTorch):** Tras un proceso de optimización con mini-batches y ajuste de arquitectura, se alcanzó un MAE de **~1809.79 €**. 
+* **🤖 Random Forest (Modelo Final):** Logró un Error Medio Absoluto (MAE) de **~851.37 €**. Es el modelo más robusto, capturando eficazmente la estacionalidad y el efecto de las promociones.
+* **🧠 Deep Learning (PyTorch):** Tras un proceso de optimización con mini-batches y ajuste de arquitectura, se alcanzó un MAE de **~1771.53 €**. 
 
 **Conclusión técnica:** Aunque la red neuronal muestra una curva de aprendizaje positiva, el **Random Forest** demuestra una superioridad clara en la gestión de datos tabulares y variables categóricas (como el tipo de tienda o surtido), justificando su elección para la aplicación en producción.
 
