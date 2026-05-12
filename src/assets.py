@@ -42,7 +42,12 @@ def integrated_data(raw_sales_data, raw_store_data):
     df['Year'] = df['Date'].dt.year
     
     # Mapeo
-    dict_tiendas = {'a': 'Pequeña', 'b': 'Mediana', 'c': 'Grande', 'd': 'Extra'}
+    dict_tiendas = {
+    'a': 'Estándar (Calle)', 
+    'b': 'Alto Tráfico (Estaciones/Aeropuertos)', 
+    'c': 'Pequeña (Barrio)', 
+    'd': 'Hipermercado (Afueras)'
+    }
     df['StoreType_Name'] = df['StoreType'].map(dict_tiendas)
     
     # Ordenación
