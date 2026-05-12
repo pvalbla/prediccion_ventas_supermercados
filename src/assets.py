@@ -43,10 +43,10 @@ def integrated_data(raw_sales_data, raw_store_data):
     
     # Mapeo
     dict_tiendas = {
-    'a': 'Estándar (Calle)', 
-    'b': 'Alto Tráfico (Estaciones/Aeropuertos)', 
-    'c': 'Pequeña (Barrio)', 
-    'd': 'Hipermercado (Afueras)'
+    'a': 'Estándar', 
+    'b': 'Alto Tráfico', 
+    'c': 'Pequeña', 
+    'd': 'Hipermercado'
     }
     df['StoreType_Name'] = df['StoreType'].map(dict_tiendas)
     
